@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 type task = {
@@ -18,19 +16,43 @@ const TASKS = [
 ];
 
 
-function SearchBar(){
+function SearchBar({filterText, isUnfinishedOnly, onFilterTextChange, onIsUnfinishedOnlyChange}:{
+  filterText: string,
+  isUnfinishedOnly: boolean,
+  onFilterTextChange: (filterText:string)=>void,
+  onIsUnfinishedOnlyChange: (checked:boolean)=>void
+}){
   return (
     <form>
-      <input type="text" placeholder='Search' />
+      <input 
+        type="text" 
+        placeholder='Search' 
+        value={filterText} 
+        onChange={(e)=>onFilterTextChange(e.target.value)}/>
       <label>
-      <input type="checkbox" />Only show tasks unfinished
+      <input 
+        type="checkbox" 
+        checked={isUnfinishedOnly}
+        onChange={(e)=>onIsUnfinishedOnlyChange(e.target.checked)} />Only show tasks unfinished
       </label>
     </form>
   );
 }
 
-function TodoTable({tasks}:{tasks:Array<task>}){
+function TodoTable({tasks, filterText, isUnfinishedOnly}:{
+  tasks:Array<task>,
+  filterText: string,
+  isUnfinishedOnly: boolean
+}){
   const taskList = tasks.map((task, index) => {
+    if(task.Finished && isUnfinishedOnly){
+      return;
+    }
+    if(task.Name.toLowerCase().indexOf(
+      filterText.toLowerCase()
+    ) === -1){
+      return;
+    }
     const fnd = task.Finished ? "Yes" : "No";
     return <p key={index}>{task.Name} {task.Limit+" Days"} {fnd}</p>;
   })
@@ -44,10 +66,19 @@ function TodoTable({tasks}:{tasks:Array<task>}){
 }
 
 function TodoApp({tasks}:{tasks:Array<task>}){
+  const [filterText, setFilterText] = useState('');
+  const [isUnfinishedOnly, setIsUnfinishedOnly] = useState(false);
   return (
     <div>
-      <SearchBar />
-      <TodoTable tasks={tasks} />
+      <SearchBar 
+        filterText={filterText} 
+        isUnfinishedOnly={isUnfinishedOnly}
+        onFilterTextChange={(filterText:string)=>setFilterText(filterText)} 
+        onIsUnfinishedOnlyChange={(checked:boolean)=>setIsUnfinishedOnly(checked)}/>
+      <TodoTable 
+        tasks={tasks} 
+        filterText={filterText} 
+        isUnfinishedOnly={isUnfinishedOnly} />
     </div>
   );
 }
