@@ -1,18 +1,20 @@
 import { useState } from 'react'
+import dayjs, {Dayjs} from 'dayjs'
 import './App.css'
 
 type task = {
   Name:string,
-  Limit:number,
+  Limit:Dayjs,
   Finished:boolean
 }
 
+
 const TASKS = [
-  {Name:"Homework", Limit:1, Finished:false},
-  {Name:"Desk", Limit:15, Finished:true},
-  {Name:"Travel", Limit:5, Finished:false},
-  {Name:"Game", Limit:100, Finished:true},
-  {Name:"Idolm@ater Millionlive!", Limit:1000000, Finished:false},
+  {Name:"Homework", Limit:dayjs().add(1,'days'), Finished:false},
+  {Name:"Desk", Limit:dayjs().add(15,'days'), Finished:true},
+  {Name:"Travel", Limit:dayjs().add(5,'days'), Finished:false},
+  {Name:"Game", Limit:dayjs().add(100,'days'), Finished:true},
+  {Name:"Idolm@ater Millionlive!", Limit:dayjs().add(1000000,'days'), Finished:false},
 ];
 
 
@@ -54,7 +56,7 @@ function TodoTable({tasks, filterText, isUnfinishedOnly}:{
       return;
     }
     const fnd = task.Finished ? "Yes" : "No";
-    return <p key={index}>{task.Name} {task.Limit+" Days"} {fnd}</p>;
+    return <p key={index}>{task.Name} {task.Limit.format("YYYY-MM-DD")} {fnd}</p>;
   })
 
   return (
